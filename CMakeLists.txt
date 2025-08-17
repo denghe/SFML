@@ -45,7 +45,7 @@ set(VERSION_PATCH 2)
 
 # add an option for choosing the build type (shared or static)
 if(NOT SFML_OS_ANDROID)
-    sfml_set_option(BUILD_SHARED_LIBS TRUE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
+    sfml_set_option(BUILD_SHARED_LIBS FALSE BOOL "TRUE to build SFML as shared libraries, FALSE to build it as static libraries")
 else()
     set(BUILD_SHARED_LIBS TRUE)
 endif()
@@ -59,9 +59,9 @@ endif()
 
 # add options to select which modules to build
 sfml_set_option(SFML_BUILD_WINDOW TRUE BOOL "TRUE to build SFML's Window module. This setting is ignored, if the graphics module is built.")
-sfml_set_option(SFML_BUILD_GRAPHICS TRUE BOOL "TRUE to build SFML's Graphics module.")
-sfml_set_option(SFML_BUILD_AUDIO TRUE BOOL "TRUE to build SFML's Audio module.")
-sfml_set_option(SFML_BUILD_NETWORK TRUE BOOL "TRUE to build SFML's Network module.")
+sfml_set_option(SFML_BUILD_GRAPHICS FALSE BOOL "TRUE to build SFML's Graphics module.")
+sfml_set_option(SFML_BUILD_AUDIO FALSE BOOL "TRUE to build SFML's Audio module.")
+sfml_set_option(SFML_BUILD_NETWORK FALSE BOOL "TRUE to build SFML's Network module.")
 
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
