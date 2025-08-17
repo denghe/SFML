@@ -27,6 +27,9 @@
 
 #include <SFML/Config.hpp>
 
+// xx
+#include <functional>
+
 namespace sf
 {
 ////////////////////////////////////////////////////////////
@@ -36,6 +39,11 @@ namespace sf
 ////////////////////////////////////////////////////////////
 struct ContextSettings
 {
+    // xx
+#if WIN32
+    std::function<void()> onDraw = [] {};
+#endif
+
     ////////////////////////////////////////////////////////////
     /// \brief Enumeration of the context attribute flags
     ///

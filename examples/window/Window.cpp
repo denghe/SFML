@@ -124,6 +124,29 @@ int main()
     // Create a clock for measuring the time elapsed
     sf::Clock clock;
 
+    auto Draw = [&] {
+        // Clear the color and depth buffers
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Apply some transformations to rotate the cube
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glTranslatef(0.f, 0.f, -200.f);
+        glRotatef(clock.getElapsedTime().asSeconds() * 50, 1.f, 0.f, 0.f);
+        glRotatef(clock.getElapsedTime().asSeconds() * 30, 0.f, 1.f, 0.f);
+        glRotatef(clock.getElapsedTime().asSeconds() * 90, 0.f, 0.f, 1.f);
+
+        // Draw the cube
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        // Finally, display the rendered frame on screen
+        window.display();
+    };
+
+#ifdef WIN32
+    contextSettings.onDraw = Draw;
+#endif
+
     // Start the game loop
     while (window.isOpen())
     {
@@ -154,22 +177,7 @@ int main()
             }
         }
 
-        // Clear the color and depth buffers
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Apply some transformations to rotate the cube
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glTranslatef(0.f, 0.f, -200.f);
-        glRotatef(clock.getElapsedTime().asSeconds() * 50, 1.f, 0.f, 0.f);
-        glRotatef(clock.getElapsedTime().asSeconds() * 30, 0.f, 1.f, 0.f);
-        glRotatef(clock.getElapsedTime().asSeconds() * 90, 0.f, 0.f, 1.f);
-
-        // Draw the cube
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-        // Finally, display the rendered frame on screen
-        window.display();
+        Draw();
     }
 
     return EXIT_SUCCESS;

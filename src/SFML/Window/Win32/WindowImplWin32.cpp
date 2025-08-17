@@ -34,9 +34,9 @@
 #ifdef WINVER
     #undef WINVER
 #endif
-#define _WIN32_WINDOWS 0x0501
-#define _WIN32_WINNT   0x0501
-#define WINVER         0x0501
+#define _WIN32_WINDOWS 0x0600
+#define _WIN32_WINNT   0x0600
+#define WINVER         0x0600
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowStyle.hpp>
 #include <SFML/System/Err.hpp>
@@ -171,7 +171,9 @@ m_cursorGrabbed   (false)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& /*settings*/) :
+WindowImplWin32::WindowImplWin32(VideoMode mode, const String& title, Uint32 style, const ContextSettings& settings) :
+// xx
+m_settings        (&(ContextSettings&)settings),
 m_handle          (NULL),
 m_callback        (0),
 m_cursorVisible   (true), // might need to call GetCursorInfo
@@ -248,12 +250,26 @@ m_cursorGrabbed   (m_fullscreen)
 
     // Increment window count
     windowCount++;
+
+    // xx
+    m_barDraggingHolder = std::make_shared<int>();
+    m_barDraggingMessageThread = std::thread{ [hWnd = m_handle, w = std::weak_ptr<int>(m_barDraggingHolder)] {
+        while (w.lock()) {
+            SendMessageTimeout(hWnd, WM_USER + 12345, 0, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK
+                | SMTO_NOTIMEOUTIFNOTHUNG | SMTO_ERRORONEXIT, 1000, {});
+            Sleep(30);
+        }
+    } };
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplWin32::~WindowImplWin32()
 {
+    // xx
+    m_barDraggingHolder.reset();
+    m_barDraggingMessageThread.join();
+
     // TODO should we restore the cursor shape and visibility?
 
     // Destroy the custom icon, if any
@@ -1130,6 +1146,11 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                     JoystickImpl::updateConnections();
             }
 
+            break;
+        }
+        // xx
+        case (WM_USER + 12345): {
+            m_settings->onDraw();
             break;
         }
     }

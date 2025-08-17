@@ -34,8 +34,8 @@
 #ifdef _WIN32_WINNT
     #undef _WIN32_WINNT
 #endif
-#define _WIN32_WINDOWS      0x0501
-#define _WIN32_WINNT        0x0501
+#define _WIN32_WINDOWS      0x0600
+#define _WIN32_WINNT        0x0600
 #define DIRECTINPUT_VERSION 0x0800
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>

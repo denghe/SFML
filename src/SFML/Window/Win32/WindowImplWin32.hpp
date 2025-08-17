@@ -33,6 +33,8 @@
 #include <SFML/System/String.hpp>
 #include <windows.h>
 
+// xx
+#include <thread>
 
 namespace sf
 {
@@ -294,6 +296,11 @@ private:
     bool     m_mouseInside;      //!< Mouse is inside the window?
     bool     m_fullscreen;       //!< Is the window fullscreen?
     bool     m_cursorGrabbed;    //!< Is the mouse cursor trapped?
+
+    // xx
+    ContextSettings* m_settings{};
+    std::shared_ptr<int> m_barDraggingHolder;
+    std::thread m_barDraggingMessageThread;
 };
 
 } // namespace priv
