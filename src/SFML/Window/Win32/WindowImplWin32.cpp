@@ -250,24 +250,12 @@ m_cursorGrabbed   (m_fullscreen)
 
     // Increment window count
     windowCount++;
-
-    // xx
-    m_barDraggingMessageThread = std::thread{ [hWnd = m_handle, w = std::weak_ptr<int>(m_settings->onDrawHolder)] {
-        while (w.lock()) {
-            SendMessageTimeout(hWnd, WM_USER + 12345, 0, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK
-                | SMTO_NOTIMEOUTIFNOTHUNG | SMTO_ERRORONEXIT, 1000, {});
-            Sleep(30);
-        }
-    } };
 }
 
 
 ////////////////////////////////////////////////////////////
 WindowImplWin32::~WindowImplWin32()
 {
-    // xx
-    m_barDraggingMessageThread.join();
-
     // TODO should we restore the cursor shape and visibility?
 
     // Destroy the custom icon, if any
@@ -769,6 +757,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Start resizing
         case WM_ENTERSIZEMOVE:
         {
+            SetTimer(m_handle, 1, 0, NULL);     // xx
             m_resizing = true;
             grabCursor(false);
             break;
@@ -777,6 +766,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Stop resizing
         case WM_EXITSIZEMOVE:
         {
+            KillTimer(m_handle, 1);             // xx
             m_resizing = false;
 
             // Ignore cases where the window has only been moved
@@ -1147,10 +1137,25 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
         // xx
-        case (WM_USER + 12345): {
+        // Keeping things moving during Win32 Move/Resize events
+        // https://gamedev.net/forums/topic/672094-keeping-things-moving-during-win32-moveresize-events/5254386/
+        case WM_NCLBUTTONDOWN:
+            if (SendMessage(m_handle, WM_NCHITTEST, wParam, lParam) == HTCAPTION) {
+                POINT point;
+                GetCursorPos(&point);
+                ScreenToClient(m_handle, &point);
+                PostMessage(m_handle, WM_MOUSEMOVE, 0, point.x | point.y << 16);
+            }
+            break;
+        //case WM_ENTERSIZEMOVE:
+        //    SetTimer(hWnd, 1, 0, NULL);
+        //    break;
+        //case WM_EXITSIZEMOVE:
+        //    KillTimer(hWnd, 1);
+        //    break;
+        case WM_TIMER:
             m_settings->onDraw();
             break;
-        }
     }
 }
 

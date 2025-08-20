@@ -33,9 +33,6 @@
 #include <SFML/System/String.hpp>
 #include <windows.h>
 
-// xx
-#include <thread>
-
 namespace sf
 {
 namespace priv
@@ -299,7 +296,6 @@ private:
 
     // xx
     ContextSettings* m_settings{};
-    std::thread m_barDraggingMessageThread;
 };
 
 } // namespace priv
