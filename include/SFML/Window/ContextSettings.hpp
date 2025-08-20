@@ -43,7 +43,7 @@ struct ContextSettings
     // xx
 #if WIN32
     std::function<void()> onDraw = [] {};
-    std::shared_ptr<int> onDrawHolder;
+    std::shared_ptr<int> onDrawHolder = std::make_shared<int>();
 #endif
 
     ////////////////////////////////////////////////////////////
