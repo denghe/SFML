@@ -252,8 +252,7 @@ m_cursorGrabbed   (m_fullscreen)
     windowCount++;
 
     // xx
-    m_barDraggingHolder = std::make_shared<int>();
-    m_barDraggingMessageThread = std::thread{ [hWnd = m_handle, w = std::weak_ptr<int>(m_barDraggingHolder)] {
+    m_barDraggingMessageThread = std::thread{ [hWnd = m_handle, w = std::weak_ptr<int>(m_settings->onDrawHolder)] {
         while (w.lock()) {
             SendMessageTimeout(hWnd, WM_USER + 12345, 0, 0, SMTO_ABORTIFHUNG | SMTO_BLOCK
                 | SMTO_NOTIMEOUTIFNOTHUNG | SMTO_ERRORONEXIT, 1000, {});
@@ -267,7 +266,6 @@ m_cursorGrabbed   (m_fullscreen)
 WindowImplWin32::~WindowImplWin32()
 {
     // xx
-    m_barDraggingHolder.reset();
     m_barDraggingMessageThread.join();
 
     // TODO should we restore the cursor shape and visibility?

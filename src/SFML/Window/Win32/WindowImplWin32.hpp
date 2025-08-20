@@ -299,7 +299,6 @@ private:
 
     // xx
     ContextSettings* m_settings{};
-    std::shared_ptr<int> m_barDraggingHolder;
     std::thread m_barDraggingMessageThread;
 };
 
